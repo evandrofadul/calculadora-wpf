@@ -1,0 +1,132 @@
+﻿<Window x:Class="Calculadora_WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Calculadora_WPF"
+        mc:Ignorable="d"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        FontFamily="{materialDesign:MaterialDesignFont}"
+        Title="Calculadora" Height="484" Width="332" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="none" Padding="0,0,0,0" PreviewTextInput="Window_PreviewTextInput">
+    <Grid>
+        <!-- Barra de título -->
+        <Border Background="#222222" Padding="0" Height="30" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <materialDesign:PackIcon Kind="CalculatorVariant" Width="18" Height="18" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                <TextBlock Text="Calculadora" Foreground="AliceBlue" Margin="6,0,0,0" Height="16"/>
+                <Button HorizontalAlignment="Right" Width="45" Height="30" Margin="137,0,0,0" Padding="0,0,0,0" VerticalAlignment="Center"
+                        Background="#222222" BorderBrush="#222222" materialDesign:ElevationAssist.Elevation="Dp0" Foreground="LightGray" Click="MiniButton_Click">
+                    <materialDesign:PackIcon Kind="Minus" Width="20" Height="20" VerticalAlignment="Center" />
+                </Button>
+                <Button HorizontalAlignment="Right" Width="45" Height="30" Padding="0,0,0,0" VerticalAlignment="Center"
+                        Background="#222222" BorderBrush="#222222" materialDesign:ElevationAssist.Elevation="Dp0" Foreground="LightGray" Click="CloseButton_Click">
+                    <materialDesign:PackIcon Kind="Close" Width="20" Height="20" VerticalAlignment="Center" />
+                </Button>
+            </StackPanel>
+        </Border>
+        
+        <!-- Botão para abrir a sidebar do histórico -->
+        <Button x:Name="btnHistorico" VerticalAlignment="Top" HorizontalAlignment="Left" Width="25" Height="25" Padding="0" Margin="9,34,0,0" Style="{StaticResource MaterialDesignToolButton}" Click="HistoryButton_Click">
+            <materialDesign:PackIcon Kind="History" Width="23" Height="23" VerticalAlignment="Center" />
+        </Button>
+
+        <!-- Sidebar -->
+        <Grid x:Name="historySidebar" Visibility="Hidden" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0,30,0,0" Width="332" Height="341" Background="#222" Panel.ZIndex="2">
+            <ListBox ItemsSource="{Binding HistoricoCompleto}" Margin="0,31,0,0" FontSize="18">
+            </ListBox>
+            <Border Background="#202020" Padding="0" Height="30" VerticalAlignment="top">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="top">
+                    <TextBlock Text="Histórico" Foreground="AliceBlue" Margin="-233,0,0,0" Height="16"/>
+                    <Button VerticalAlignment="top" HorizontalAlignment="Right" Width="45" Padding="0" Margin="0" Style="{StaticResource MaterialDesignToolButton}" Command="{Binding LimparHistoricoCommand}">
+                        <materialDesign:PackIcon Kind="TrashCanOutline" Width="40" Height="20" VerticalAlignment="Center" />
+                    </Button>
+                    <Button VerticalAlignment="top" HorizontalAlignment="Right" Width="45" Padding="0" Margin="0" Style="{StaticResource MaterialDesignToolButton}" Click="CloseHistoryButton_Click">
+                        <materialDesign:PackIcon Kind="Close" Width="20" Height="20" VerticalAlignment="Center" />
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Grid>
+         
+        <!-- Display -->
+        <Label x:Name="txtHistorico" Content="{Binding UltimaOperacao}" Height="17" FontSize="15" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,39,17,0" Padding="0"/>
+        <TextBox x:Name="txtDisplay" Text="{Binding Display, UpdateSourceTrigger=PropertyChanged}" Height="70" VerticalAlignment="Top" TextAlignment="Right" IsReadOnly="True" Margin="9,63,9,0" Padding="0,10,10,10" FontSize="38"  Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+        
+        <!-- Botões da calculadora -->
+        <Grid Margin="4,140,4,4">
+            <Grid.Resources>
+                <Style x:Key="Buttons" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                    <Setter Property="BorderBrush" Value="Black" />
+                    <Setter Property="Foreground" Value="#ddd" />
+                    <Setter Property="Background" Value="#111" />
+                </Style>
+                <Style x:Key="NumberButtons" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                    <Setter Property="BorderBrush" Value="Black" />
+                    <Setter Property="Foreground" Value="#ddd" />
+                    <Setter Property="Background" Value="#191919" />
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="81"/>
+                <ColumnDefinition Width="81"/>
+                <ColumnDefinition Width="81"/>
+                <ColumnDefinition Width="81"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Column="0" Grid.Row="0" Command="{Binding OperadorCommand}" CommandParameter="%" Width="75" Height="50" FontSize="20" Style="{StaticResource Buttons}">
+                <materialDesign:PackIcon Kind="Percent" Width="20" Height="20" VerticalAlignment="Center" />
+            </Button>
+            <Button Grid.Column="1" Grid.Row="0" Content="mod" Command="{Binding OperadorCommand}" CommandParameter="mod" Width="75" Height="50" FontSize="20" Style="{StaticResource Buttons}"/>
+            <Button Grid.Column="2" Grid.Row="0" Content="C" Command="{Binding ClearCommand}" Width="75" Height="50" FontSize="24" Style="{StaticResource Buttons}"/>
+            <Button Grid.Column="3" Grid.Row="0" Command="{Binding BackCommand}" Width="75" Height="50" Style="{StaticResource Buttons}">
+                <materialDesign:PackIcon Kind="BackspaceOutline" Width="20" Height="20" VerticalAlignment="Center" />
+            </Button>
+            <Button Grid.Column="0" Grid.Row="1" Content="1/X" Command="{Binding InversoDeXCommand}" Width="75" Height="50" FontSize="15" Style="{StaticResource Buttons}"/>
+            <Button Grid.Column="1" Grid.Row="1" Command="{Binding OperadorCommand}" CommandParameter="^" Width="75" Height="50" FontSize="20" Style="{StaticResource Buttons}">
+                <materialDesign:PackIcon Kind="Exponent" Width="20" Height="20" VerticalAlignment="Center" />
+            </Button>
+            <Button Grid.Column="2" Grid.Row="1" Command="{Binding RaizQuadradaCommand}" Width="75" Height="50" FontSize="20" Style="{StaticResource Buttons}">
+                <materialDesign:PackIcon Kind="SquareRoot" Width="24" Height="24" VerticalAlignment="Center" />
+            </Button>
+            <Button Grid.Column="3" Grid.Row="1" Command="{Binding OperadorCommand}" CommandParameter="/" Width="75" Height="50" Style="{StaticResource Buttons}">
+                <materialDesign:PackIcon Kind="Division" Width="25" Height="25" VerticalAlignment="Center" />
+            </Button>
+            <Button Grid.Column="0" Grid.Row="2" Content="7" Command="{Binding NumeroCommand}" CommandParameter="7" Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}"/>
+            <Button Grid.Column="1" Grid.Row="2" Content="8" Command="{Binding NumeroCommand}" CommandParameter="8" Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}"/>
+            <Button Grid.Column="2" Grid.Row="2" Content="9" Command="{Binding NumeroCommand}" CommandParameter="9" Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}"/>
+            <Button Grid.Column="3" Grid.Row="2" Command="{Binding OperadorCommand}" CommandParameter="*" Width="75" Height="50" Style="{StaticResource Buttons}">
+                <materialDesign:PackIcon Kind="Multiplication" Width="21" Height="21" VerticalAlignment="Center" />
+            </Button>
+            <Button Grid.Column="0" Grid.Row="3" Content="4" Command="{Binding NumeroCommand}" CommandParameter="4" Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}"/>
+            <Button Grid.Column="1" Grid.Row="3" Content="5" Command="{Binding NumeroCommand}" CommandParameter="5" Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}"/>
+            <Button Grid.Column="2" Grid.Row="3" Content="6" Command="{Binding NumeroCommand}" CommandParameter="6" Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}"/>
+            <Button Grid.Column="3" Grid.Row="3" Command="{Binding OperadorCommand}" CommandParameter="-" Width="75" Height="50" Style="{StaticResource Buttons}">
+                <materialDesign:PackIcon Kind="Minus" Width="23" Height="23" VerticalAlignment="Center" />
+            </Button>
+            <Button Grid.Column="0" Grid.Row="4" Content="1" Command="{Binding NumeroCommand}" CommandParameter="1" Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}"/>
+            <Button Grid.Column="1" Grid.Row="4" Content="2" Command="{Binding NumeroCommand}" CommandParameter="2" Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}"/>
+            <Button Grid.Column="2" Grid.Row="4" Content="3" Command="{Binding NumeroCommand}" CommandParameter="3" Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}" Cursor="Hand"/>
+            <Button Grid.Column="3" Grid.Row="4" Command="{Binding OperadorCommand}" CommandParameter="+" Width="75" Height="50" Style="{StaticResource Buttons}">
+                <materialDesign:PackIcon Kind="Plus" Width="25" Height="25" VerticalAlignment="Center" />
+            </Button>
+            <Button Grid.Column="0" Grid.Row="5" Command="{Binding TrocarSinalCommand}" Width="75" Height="50" Style="{StaticResource NumberButtons}">
+                <materialDesign:PackIcon Kind="PlusMinus" Width="21" Height="21" VerticalAlignment="Center" />
+            </Button>
+            <Button Grid.Column="1" Grid.Row="5" Content="0" Command="{Binding NumeroCommand}" CommandParameter="0" Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}"/>
+            <Button Grid.Column="2" Grid.Row="5" Content="," Command="{Binding NumeroCommand}" CommandParameter="," Width="75" Height="50" FontSize="20" Style="{StaticResource NumberButtons}"/>
+            <Button Grid.Column="3" Grid.Row="5" Command="{Binding IgualCommand}" Width="75" Height="50" BorderBrush="#555" Background="#434343" Foreground="#ddd" materialDesign:ElevationAssist.Elevation="Dp0">
+                <materialDesign:PackIcon Kind="Equal" Width="24" Height="24" VerticalAlignment="Center" />
+            </Button>
+        </Grid>
+    </Grid>
+</Window>
